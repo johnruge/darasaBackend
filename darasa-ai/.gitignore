@@ -34,3 +34,6 @@ build/
 
 ###dotenv
 .env
+
+###system files
+.DS_Store
