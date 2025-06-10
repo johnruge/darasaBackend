@@ -17,6 +17,8 @@ public class Note {
     private long id;
 
     @Column
+    private String name;
+    @Column
     private LocalTime createdTime;
     @Column
     private LocalTime lastUpdated;
