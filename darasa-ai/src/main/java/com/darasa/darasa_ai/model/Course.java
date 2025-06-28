@@ -28,4 +28,63 @@ public class Course {
 
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
     private Set<Offering> offerings;
+
+    // Constructors
+    public Course() {}
+
+    public Course(String code, String name, String description) {
+        this.code = code;
+        this.name = name;
+        this.description = description;
+    }
+
+    // Getters
+    public long getId() {
+        return id;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public Set<Teacher> getTeachers() {
+        return teachers;
+    }
+
+    public Set<Offering> getOfferings() {
+        return offerings;
+    }
+
+    // Setters
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setTeachers(Set<Teacher> teachers) {
+        this.teachers = teachers;
+    }
+
+    public void setOfferings(Set<Offering> offerings) {
+        this.offerings = offerings;
+    }
 }
