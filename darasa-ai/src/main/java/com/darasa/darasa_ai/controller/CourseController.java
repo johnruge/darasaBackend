@@ -2,8 +2,11 @@ package com.darasa.darasa_ai.controller;
 
 import com.darasa.darasa_ai.dto.CourseDTO;
 import com.darasa.darasa_ai.dto.CreateCourseRequest;
+import com.darasa.darasa_ai.dto.QuestionGenerationRequest;
+import com.darasa.darasa_ai.dto.QuestionGenerationResponse;
 import com.darasa.darasa_ai.dto.UpdateCourseRequest;
 import com.darasa.darasa_ai.model.Course;
+import com.darasa.darasa_ai.services.AIService;
 import com.darasa.darasa_ai.services.CourseService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -19,9 +22,11 @@ import java.util.stream.Collectors;
 public class CourseController {
 
     private final CourseService courseService;
+    private final AIService aiService;
 
-    public CourseController(CourseService courseService) {
+    public CourseController(CourseService courseService, AIService aiService) {
         this.courseService = courseService;
+        this.aiService = aiService;
     }
 
     @GetMapping
@@ -72,6 +77,35 @@ public class CourseController {
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.notFound().build();
+    }
+
+    // AI-Powered Question Generation Endpoint
+    @PostMapping("/{id}/generate-questions")
+    public ResponseEntity<QuestionGenerationResponse> generateQuestions(
+            @PathVariable Long id,
+            @RequestBody @Valid QuestionGenerationRequest request) {
+
+        try {
+            // Ensure the course ID matches the path parameter
+            request.setCourseId(id);
+
+            // Validate course exists
+            if (courseService.getCourseById(id).isEmpty()) {
+                return ResponseEntity.notFound().build();
+            }
+
+            // Generate questions using AI
+            QuestionGenerationResponse response = aiService.generateQuestions(request);
+
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            // Return error response
+            QuestionGenerationResponse errorResponse = new QuestionGenerationResponse();
+            errorResponse.setMessage("Failed to generate questions: " + e.getMessage());
+            errorResponse.setCourseId(id);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
     }
 
     private CourseDTO convertToDTO(Course course) {
